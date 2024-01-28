@@ -9,7 +9,7 @@ import HomeScreen from '../../screens/HomeScreen';
 
 const Tab = createBottomTabNavigator();
 
-export default function TabBarStackComponent() {
+export default function MainStack() {
     return (
         <Tab.Navigator 
             initialRouteName={"HomeScreen"}

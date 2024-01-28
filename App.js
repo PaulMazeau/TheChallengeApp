@@ -1,23 +1,53 @@
 import React from 'react';
+import { View, ActivityIndicator } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View } from 'react-native';
-import TabBarStackComponent from './component/Navigation/TabBarStack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import MainStack from './component/Navigation/MainStack';
+import AuthStack from './component/Navigation/AuthStack';
+import { UserProvider } from './context/UserContext';
 
-export default function App() {
-  return (
-    <NavigationContainer>
-      <View style={styles.container}>
-        <TabBarStackComponent />
-        <StatusBar style="auto" />
+const Stack = createNativeStackNavigator();
+
+const AppNavigator = () => {
+  const { currentUser, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
       </View>
-    </NavigationContainer>
+    );
+  }
+
+  return (
+    <Stack.Navigator>
+      {currentUser ? (
+        <Stack.Screen 
+          name="Main" 
+          component={MainStack} 
+          options={{ headerShown: false }}
+        />
+      ) : (
+        <Stack.Screen
+          name="Auth"
+          component={AuthStack}
+          options={{ headerShown: false }}
+        />
+      )}
+    </Stack.Navigator>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-});
+// Composant App
+export default function App() {
+  return (
+    <AuthProvider>
+      <UserProvider>
+        <NavigationContainer>
+          <AppNavigator />
+        </NavigationContainer>
+      </UserProvider>
+    </AuthProvider>
+  );
+}
