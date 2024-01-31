@@ -1,25 +1,30 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import { useUser } from '../context/UserContext';
-import ChallengeCardStack from '../component/HomePage/ChallengeCardStack';
+import { View, StyleSheet } from 'react-native';
+import GridBackground from '../component/HomePage/GridBackground';
+import ChallengeCard from '../component/Reusable/ChallengeCard';
+import AnswerCardStack from '../component/Reusable/AnswerCardStack';
 
 export default function HomeScreen() {
-  const { profile } = useUser();
-
   return (
-    <View style={styles.container}>
-      <Text>HomePage</Text>
-      <Text>Bienvenue {profile.FirstName} {profile.LastName}</Text> 
-      <ChallengeCardStack/>
+    <View style={styles.page}>
+      <GridBackground/>
+      <View style={styles.container}>
+        <ChallengeCard/>
+        <AnswerCardStack/>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  page: {
+    flex: 1,
+    backgroundColor: 'transparent', 
+  },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    marginHorizontal: 14,
+    alignItems: 'center',
     justifyContent: 'center',
-    alignItems: 'center'
-  },
+  }
 });

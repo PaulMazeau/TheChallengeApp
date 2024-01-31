@@ -17,8 +17,11 @@ export default function MainStack() {
                 headerShown: false,
                 tabBarShowLabel: false,
                 tabBarStyle: {
-                    backgroundColor: "gray",
+                    backgroundColor: "white",
+                    borderTopColor: 'black',
+                    borderTopWidth: 1,
                     display: "flex",
+                    padding: 20
                 },
             }}
         >
