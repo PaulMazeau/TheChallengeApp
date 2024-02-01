@@ -3,9 +3,12 @@ import { StyleSheet, View, Text, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FB_AUTH } from '../firebaseconfig';
 import { signOut } from 'firebase/auth';
+import { useUser } from '../context/UserContext';
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
+  const { profile, progress } = useUser();
+
   const handleSignOut = () => {
     signOut(FB_AUTH)
       .then(() => {
@@ -19,15 +22,25 @@ export default function ProfileScreen() {
       });
   };
 
-
   return (
-      <View style={styles.container}>
-        <Text>ProfileScreen</Text>
-        <Button
-          title="Déconnexion"
-          onPress={handleSignOut}
-        />
-      </View>
+    <View style={styles.container}>
+      <Text>ProfileScreen</Text>
+      <Text>Prenom: {profile.FirstName}</Text>
+      <Text>Nom: {profile.LastName}</Text>
+      {progress.map((item, index) => (
+        <View key={index}>
+          <Text>Leçon: {item.classID}</Text>
+          <Text>Score Dernier: {item.lastScore}</Text>
+          <Text>Date Dernière Tentative: {new Date(item.lastTryDate).toLocaleDateString()}</Text>
+          <Text>Répétitions Effectuées: {item.repeatDone}</Text>
+          <Text>Prochaine Date Affichage: {new Date(item.nextTryDate).toLocaleDateString()}</Text>
+        </View>
+      ))}
+      <Button
+        title="Déconnexion"
+        onPress={handleSignOut}
+      />
+    </View>
   );
 }
 

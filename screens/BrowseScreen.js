@@ -4,7 +4,7 @@ import { StyleSheet, View, Text } from 'react-native';
 export default function BrowseScreen() {
   return (
       <View style={styles.container}>
-        <Text>BrowseScreen</Text>
+            <Text>BrowseScreen</Text>
       </View>
   );
 }

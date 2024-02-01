@@ -44,9 +44,9 @@ export default function App() {
   return (
     <AuthProvider>
       <UserProvider>
-        <NavigationContainer>
-          <AppNavigator />
-        </NavigationContainer>
+            <NavigationContainer>
+              <AppNavigator />
+            </NavigationContainer>
       </UserProvider>
     </AuthProvider>
   );
