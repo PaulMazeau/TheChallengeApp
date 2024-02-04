@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import MainStack from './component/Navigation/MainStack';
 import AuthStack from './component/Navigation/AuthStack';
 import { UserProvider } from './context/UserContext';
+import { QuizProvider } from './context/ClassContext';
 
 const Stack = createNativeStackNavigator();
 
@@ -44,9 +45,11 @@ export default function App() {
   return (
     <AuthProvider>
       <UserProvider>
+        <QuizProvider>
             <NavigationContainer>
               <AppNavigator />
             </NavigationContainer>
+        </QuizProvider>
       </UserProvider>
     </AuthProvider>
   );

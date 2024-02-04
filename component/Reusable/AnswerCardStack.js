@@ -1,17 +1,18 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import AnswerCard from './AnswerCard'
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import AnswerCard from './AnswerCard';
 
-export default function AnswerCardStack() {
+export default function AnswerCardStack({ options = [] }) { // Utilise les options passées en props
+
   return (
     <View style={styles.page}>
-        <AnswerCard/>
-        <AnswerCard/>
-        <AnswerCard/>
-        <AnswerCard/>
+      {options.map((option, index) => (
+        <AnswerCard key={index} option={option} />
+      ))}
     </View>
-  )
+  );
 }
+
 
 const styles = StyleSheet.create({
     page: {
