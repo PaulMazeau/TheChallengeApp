@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, updateDoc, doc, getDoc, setDoc } from 'firebase/firestore';
 import { FB_DB } from '../firebaseconfig';
+import { useUser } from './UserContext';
 
 const QuizContext = createContext();
 
@@ -11,56 +12,96 @@ export const QuizProvider = ({ children }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [questions, setQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  
+  const [responses, setResponses] = useState([]);
+  const { profile } = useUser();
+
   useEffect(() => {
     const loadClassOfTheDay = async () => {
       const today = new Date();
-      console.log(today)
       const dateString = today.toISOString().split('T')[0]; // Format 'YYYY-MM-DD'
 
       const classesRef = collection(FB_DB, 'class');
-      const q = query(
-        classesRef,
-        where('repeatDate', 'array-contains', dateString) // Utilise la chaîne de date
-      );
-  
+      const q = query(classesRef, where('repeatDate', 'array-contains', dateString));
       const querySnapshot = await getDocs(q);
-      console.log(`Nombre de classes trouvées : ${querySnapshot.size}`);
-  
+
       if (!querySnapshot.empty) {
         const classDoc = querySnapshot.docs[0];
-        console.log("Classe du jour trouvée :", classDoc.data());
-  
-        setCurrentClass(classDoc.data()); // Stocke les données de la classe actuelle
-  
+        setCurrentClass({
+          id: classDoc.id,
+          ...classDoc.data(),
+        });
+
         const questionsRef = collection(FB_DB, `class/${classDoc.id}/questions`);
         const questionsSnapshot = await getDocs(questionsRef);
-        const questionsData = questionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        console.log("Questions de la classe du jour :", questionsData);
-        setQuestions(questionsData); // N'oubliez pas de mettre à jour l'état avec les questions récupérées
+        setQuestions(questionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
       }
-      setIsLoading(false); // Mettre à jour l'état de chargement
+      setIsLoading(false);
     };
-  
+
     loadClassOfTheDay();
   }, []);
 
+  useEffect(() => {
+    // Assurez-vous que toutes les questions ont été répondues avant d'appeler updateProgress
+    if (responses.length === questions.length && questions.length > 0) {
+      updateProgress();
+    }
+  }, [responses, questions.length]);
+
+  const submitAnswer = (selectedOptionIndex) => {
+    const isCorrect = selectedOptionIndex === questions[currentQuestionIndex].answer;
+    console.log(`Réponse à la question ${questions[currentQuestionIndex].id}:`, isCorrect ? "Correcte" : "Incorrecte");
+
+    setResponses(prevResponses => [
+      ...prevResponses,
+      { questionId: questions[currentQuestionIndex].id, selectedOption: selectedOptionIndex, isCorrect }
+    ]);
+
+    if (currentQuestionIndex < questions.length - 1) {
+      nextQuestion();
+    }
+  };
+
+  const updateProgress = async () => {
+    const correctAnswersCount = responses.filter(response => response.isCorrect).length;
+    const progressDocRef = doc(FB_DB, 'users', profile.uid, 'progress', currentClass.id);
+
+    try {
+      const progressDoc = await getDoc(progressDocRef);
+      if (progressDoc.exists()) {
+        await updateDoc(progressDocRef, {
+          lastScore: correctAnswersCount,
+          repeatDone: (progressDoc.data().repeatDone || 0) + 1,
+        });
+      } else {
+        await setDoc(progressDocRef, {
+          classID: currentClass.id,
+          lastScore: correctAnswersCount,
+          repeatDone: 1,
+        });
+      }
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du progrès :", error);
+    }
+
+    setResponses([]);
+    setCurrentQuestionIndex(0);
+  };
 
   const nextQuestion = () => setCurrentQuestionIndex(prevIndex => Math.min(prevIndex + 1, questions.length - 1));
-
   const prevQuestion = () => setCurrentQuestionIndex(prevIndex => Math.max(prevIndex - 1, 0));
 
-  const currentQuestion = questions[currentQuestionIndex];
-
   const value = {
-    currentQuestion,
     currentClass,
+    currentQuestion: questions[currentQuestionIndex],
+    submitAnswer,
     nextQuestion,
     prevQuestion,
     isLoading,
     totalQuestions: questions.length,
-    currentQuestionIndex,
   };
 
   return <QuizContext.Provider value={value}>{children}</QuizContext.Provider>;
 };
+
+export default QuizContext;

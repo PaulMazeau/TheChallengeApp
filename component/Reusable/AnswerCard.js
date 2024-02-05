@@ -1,12 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
-export default function AnswerCard({ option }) { // Utilise l'option passée en prop
-
+export default function AnswerCard({ option, onSelect, index }) {
   return (
-    <View style={styles.card}>
+    <TouchableOpacity style={styles.card} onPress={() => onSelect(index)}>
       <Text>{option}</Text>
-    </View>
+    </TouchableOpacity>
   );
 }
 

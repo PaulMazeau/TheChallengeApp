@@ -31,9 +31,7 @@ export default function ProfileScreen() {
         <View key={index}>
           <Text>Leçon: {item.classID}</Text>
           <Text>Score Dernier: {item.lastScore}</Text>
-          <Text>Date Dernière Tentative: {new Date(item.lastTryDate).toLocaleDateString()}</Text>
           <Text>Répétitions Effectuées: {item.repeatDone}</Text>
-          <Text>Prochaine Date Affichage: {new Date(item.nextTryDate).toLocaleDateString()}</Text>
         </View>
       ))}
       <Button
