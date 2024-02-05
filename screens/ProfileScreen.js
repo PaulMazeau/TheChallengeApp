@@ -24,12 +24,11 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.container}>
-      <Text>ProfileScreen</Text>
-      <Text>Prenom: {profile.FirstName}</Text>
+      <Text>Prénom: {profile.FirstName}</Text>
       <Text>Nom: {profile.LastName}</Text>
       {progress.map((item, index) => (
-        <View key={index}>
-          <Text>Leçon: {item.classID}</Text>
+        <View key={index} style={styles.progressItem}>
+          <Text>Leçon: {item.className}</Text>
           <Text>Score Dernier: {item.lastScore}</Text>
           <Text>Répétitions Effectuées: {item.repeatDone}</Text>
         </View>
@@ -48,5 +47,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  progressItem: {
+    marginVertical: 8, // Ajouté pour un peu d'espacement entre les items de progression
   },
 });
