@@ -4,14 +4,15 @@ import { useQuiz } from '../context/ClassContext';
 import GridBackground from '../component/HomePage/GridBackground';
 import AnswerCardStack from '../component/Reusable/AnswerCardStack';
 import Question from '../component/Reusable/Question';
+import Header from '../component/Reusable/Header';
 
 export default function HomeScreen() {
   const { currentClass, currentQuestion } = useQuiz();
 
-  // Affichage conditionnel en fonction de la présence d'un quizz
   return (
     <View style={styles.page}>
       <GridBackground/>
+      <Header/>
       <View style={styles.container}>
         {currentClass ? (
           <>
@@ -22,7 +23,6 @@ export default function HomeScreen() {
             <AnswerCardStack options={currentQuestion?.options}/>
           </>
         ) : (
-          // Afficher un message si aucun quizz n'est disponible
           <Text style={styles.noQuizText}>Aucun quizz à faire pour le moment. Revenez plus tard !</Text>
         )}
       </View>
