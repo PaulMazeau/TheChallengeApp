@@ -1,25 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as Font from 'expo-font';
+import { fonts } from '../../constant/fonts';
 
 export default function Header() {
-  const [fontsLoaded, setFontsLoaded] = useState(false);
-
-  async function loadFonts() {
-    await Font.loadAsync({
-      'BricolageGrotesque': require('../../assets/fonts/BricolageGrotesque.ttf'),
-    });
-    setFontsLoaded(true);
-  }
-
-  useEffect(() => {
-    loadFonts();
-  }, []);
-
-  if (!fontsLoaded) {
-    return <View/>;
-  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -37,7 +21,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     fontSize: 32,
-    fontFamily: 'BricolageGrotesque',
+    fontFamily: fonts.title,
     color: 'black',
   },
 });

@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, ActivityIndicator } from 'react-native'
+import React, { useState, useEffect } from 'react';
+import { View, ActivityIndicator, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -7,6 +7,7 @@ import MainStack from './component/Navigation/MainStack';
 import AuthStack from './component/Navigation/AuthStack';
 import { UserProvider } from './context/UserContext';
 import { QuizProvider } from './context/ClassContext';
+import useFonts from './hooks/useFonts';
 
 const Stack = createNativeStackNavigator();
 
@@ -38,10 +39,24 @@ const AppNavigator = () => {
       )}
     </Stack.Navigator>
   );
-}
+};
 
-// Composant App
 export default function App() {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  useEffect(() => {
+    const loadFontsAsync = async () => {
+      await useFonts();
+      setFontsLoaded(true);
+    };
+
+    loadFontsAsync();
+  }, []);
+
+  if (!fontsLoaded) {
+    return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text>Chargement des polices...</Text></View>;
+  }
+
   return (
     <AuthProvider>
       <UserProvider>
