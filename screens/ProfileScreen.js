@@ -49,5 +49,6 @@ const styles = StyleSheet.create({
   subTitle: {
     fontSize: 24,
     fontFamily: fonts.title,
+    paddingHorizontal: 16,
   },
 });

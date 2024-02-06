@@ -27,7 +27,11 @@ export default function Badges() {
 
     return (
         <View style={styles.container}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <ScrollView 
+                horizontal 
+                showsHorizontalScrollIndicator={false} 
+                contentContainerStyle={styles.scrollViewContent}
+            >
                 {badgeUrls.map((url, index) => (
                     <View key={index} style={styles.badgeContainer}>
                         {/* Utilisez SvgUri pour afficher le SVG */}
@@ -54,5 +58,7 @@ const styles = StyleSheet.create({
         width: 127, // Vous pouvez ajuster la largeur et la hauteur comme nécessaire
         height: 179,
     },
-    // Pas besoin de style pour badge puisqu'on utilise SvgUri
+    scrollViewContent: {
+        paddingHorizontal: 16, // Ajoute du padding autour du contenu interne du ScrollView
+      },
 });

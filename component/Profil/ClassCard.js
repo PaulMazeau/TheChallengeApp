@@ -46,7 +46,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-around',
-        padding: 8,
+        paddingHorizontal: 16,
+        marginTop: 12,
     },
     progressItem: {
         backgroundColor: 'black',
