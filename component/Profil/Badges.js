@@ -1,15 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
-import { SvgUri } from 'react-native-svg'; // Importez SvgUri
+import { SvgUri } from 'react-native-svg';
+import { useUser } from '../../context/UserContext';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { FB_STORE } from '../../firebaseconfig';
 
 export default function Badges() {
+    const { progress } = useUser(); // Utilisez le hook useUser pour accéder aux données de progression
     const [badgeUrls, setBadgeUrls] = useState([]);
 
     useEffect(() => {
+        const totalRepeatDone = progress.reduce((total, current) => total + current.repeatDone, 0);
+
+        // Déterminez quels badges débloquer en fonction de totalRepeatDone
+        const badgeNames = [];
+        if (totalRepeatDone >= 10) badgeNames.push('Badge_10_quizz.svg');
+        if (totalRepeatDone >= 20) badgeNames.push('Badge_20_quizz.svg');
+        // Ajoutez d'autres conditions pour les paliers de badges supplémentaires
+
+        // Fonction pour charger les URLs des badges débloqués
         const fetchBadges = async () => {
-            const badgeNames = ['Badge_10_quizz.svg', 'Badge_20_quizz.svg', 'Badge_30_quizz.svg', 'Badge_50_quizz.svg', 'Badge_100_quizz.svg', 'Badge_150_quizz.svg', 'Badge_365_quizz.svg',];
             const urls = await Promise.all(badgeNames.map(async (name) => {
                 try {
                     const badgeRef = ref(FB_STORE, `Badges/${name}`);
@@ -19,11 +29,11 @@ export default function Badges() {
                     return null;
                 }
             }));
-            setBadgeUrls(urls.filter(url => url)); // Filtre pour éliminer les valeurs nulles
+            setBadgeUrls(urls.filter(url => url)); // Filtrez pour éliminer les valeurs nulles
         };
 
         fetchBadges();
-    }, []);
+    }, [progress]); // Ajoutez progress comme dépendance pour recalculer à chaque mise à jour
 
     return (
         <View style={styles.container}>
@@ -34,7 +44,6 @@ export default function Badges() {
             >
                 {badgeUrls.map((url, index) => (
                     <View key={index} style={styles.badgeContainer}>
-                        {/* Utilisez SvgUri pour afficher le SVG */}
                         <SvgUri
                             width="100%"
                             height="100%"
@@ -49,16 +58,15 @@ export default function Badges() {
 
 const styles = StyleSheet.create({
     container: {
-        alignItems: 'center',
         marginTop: 8,
         marginBottom: 36,
     },
     badgeContainer: {
         marginRight: 10,
-        width: 127, // Vous pouvez ajuster la largeur et la hauteur comme nécessaire
+        width: 127,
         height: 179,
     },
     scrollViewContent: {
-        paddingHorizontal: 16, // Ajoute du padding autour du contenu interne du ScrollView
-      },
+        paddingHorizontal: 16,
+    },
 });
