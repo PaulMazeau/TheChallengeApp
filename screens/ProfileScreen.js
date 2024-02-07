@@ -5,8 +5,11 @@ import Badges from '../component/Profil/Badges';
 import PersonnalInformation from '../component/Profil/PersonnalInformation';
 import { fonts } from '../constant/fonts';
 import { StatusBar } from 'expo-status-bar';
+import { useTheme } from '../hooks/useTheme';
 
 export default function ProfileScreen() {
+  const theme = useTheme();
+  const styles = getStyles(theme); // Création des styles dynamiquement en fonction du thème
 
   return (
     <ScrollView 
@@ -25,18 +28,19 @@ export default function ProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({  
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: theme.BgColor,
   },
   contentContainer: {
-    flexGrow: 1, // S'assure que le ScrollView utilise la hauteur du contenu
-    backgroundColor: '#fff',
+    flexGrow: 1,
+    backgroundColor: theme.BgColor,
   },
   subTitle: {
     fontSize: 24,
     fontFamily: fonts.title,
     paddingHorizontal: 16,
+    color: theme.textColor,
   },
 });

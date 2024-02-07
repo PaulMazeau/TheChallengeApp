@@ -6,11 +6,13 @@ import Browse from '../../assets/icons/Browse.svg';
 import BrowseScreen from '../../screens/BrowseScreen';
 import ProfileScreen from '../../screens/ProfileScreen';
 import HomeScreen from '../../screens/HomeScreen';
-import { colors } from '../../constant/colors';
+import { useTheme } from '../../hooks/useTheme';
 
 const Tab = createBottomTabNavigator();
 
 export default function MainStack() {
+    const theme = useTheme();
+    
     return (
         <Tab.Navigator 
             initialRouteName={"HomeScreen"}
@@ -18,7 +20,7 @@ export default function MainStack() {
                 headerShown: false,
                 tabBarShowLabel: false,
                 tabBarStyle: {
-                    backgroundColor: colors.Black,
+                    backgroundColor: theme.reverseBgColor,
                     display: "flex",
                     padding: 20
                 },
@@ -28,21 +30,21 @@ export default function MainStack() {
                 name="HomeScreen" 
                 component={HomeScreen}
                 options={{
-                    tabBarIcon: () => <Home stroke={'white'} width={24} height={24} />,
+                    tabBarIcon: () => <Home stroke={theme.reverseTextColor} width={24} height={24} />,
                 }} 
             />
             <Tab.Screen 
                 name="BrowseScreen" 
                 component={BrowseScreen}
                 options={{
-                    tabBarIcon: () => <Browse stroke={'white'} width={24} height={24} />,
+                    tabBarIcon: () => <Browse stroke={theme.reverseTextColor} width={24} height={24} />,
                 }} 
             />
             <Tab.Screen 
                 name="ProfileScreen" 
                 component={ProfileScreen}
                 options={{
-                    tabBarIcon: () => <Profile stroke={'white'} width={24} height={24} />,
+                    tabBarIcon: () => <Profile stroke={theme.reverseTextColor} width={24} height={24} />,
                 }} 
             />
         </Tab.Navigator>

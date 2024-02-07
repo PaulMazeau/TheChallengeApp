@@ -2,10 +2,13 @@ import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { useUser } from '../../context/UserContext';
 import { fonts } from '../../constant/fonts';
+import { useTheme } from '../../hooks/useTheme';
 
 export default function ClassCard() {
     const { progress } = useUser();
-
+    const theme = useTheme();
+    const styles = getStyles(theme); // Création des styles dynamiquement en fonction du thème
+  
     // Fonction pour générer les "sous-cartes" pour l'effet de pile
     const renderStackEffect = (index) => {
         let stack = [];
@@ -41,7 +44,7 @@ export default function ClassCard() {
     );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({  
     container: {
         flexDirection: 'row',
         flexWrap: 'wrap',
@@ -50,7 +53,7 @@ const styles = StyleSheet.create({
         marginTop: 12,
     },
     progressItem: {
-        backgroundColor: 'black',
+        backgroundColor: theme.reverseBgColor,
         borderRadius: 4,
         width: 92,
         height: 92,
@@ -68,7 +71,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         width: 92,
         height: 92,
-        backgroundColor: 'black',
+        backgroundColor: theme.reverseBgColor,
         borderRadius: 4,
     },
     topCard: {
@@ -77,7 +80,7 @@ const styles = StyleSheet.create({
         height: 64,
     },
     bottomCard: {
-        backgroundColor: 'white',
+        backgroundColor: theme.BgColor,
         width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
@@ -86,18 +89,18 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 4,
     },
     score: {
-        color: 'white',
+        color: theme.reverseTextColor,
         fontSize: 16,
         fontFamily: fonts.text,
         marginBottom: 4,
     },
     repetition: {
-        color: 'white',
+        color: theme.reverseTextColor,
         fontFamily: fonts.text,
         fontSize: 12,
     },
     class: {
-        color: 'black',
+        color: theme.textColor,
         fontFamily: fonts.text,
         fontSize: 16,
     },

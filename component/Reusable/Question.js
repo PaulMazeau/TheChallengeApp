@@ -1,9 +1,12 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { colors } from '../../constant/colors';
 import { fonts } from '../../constant/fonts';
+import { useTheme } from '../../hooks/useTheme';
 
 export default function Question({ title, question }) {
+  const theme = useTheme();
+  const styles = getStyles(theme); // Création des styles dynamiquement en fonction du thème
+
   return (
     <View style={styles.card}>
       <Text style={styles.classTitle}>Leçon : {title}</Text>
@@ -14,7 +17,7 @@ export default function Question({ title, question }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({  
   card: {
     height: '40%',
     width: '100%',
@@ -24,12 +27,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 2,
-    backgroundColor: colors.Black,
+    backgroundColor: theme.reverseBgColor,
     padding: 14,
     justifyContent: 'center',
   },
   classTitle: {
-    color: 'white',
+    color: theme.reverseTextColor,
     fontSize: 16,
     position: 'absolute',
     fontFamily: fonts.text,
@@ -42,7 +45,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   question: {
-    color: 'white',
+    color: theme.reverseTextColor,
     fontSize: 20,
     fontFamily: fonts.text,
     textAlign: 'center',

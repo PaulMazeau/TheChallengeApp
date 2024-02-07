@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
+import { useTheme } from '../../hooks/useTheme';
 
 // Composant GridBackground
 const GridBackground = () => {
@@ -8,6 +9,8 @@ const GridBackground = () => {
   const screenHeight = Dimensions.get('window').height;
   const numVerticalLines = Math.ceil(screenWidth / gridSize);
   const numHorizontalLines = Math.ceil(screenHeight / gridSize);
+  const theme = useTheme();
+  const styles = getStyles(theme); // Création des styles dynamiquement en fonction du thème
 
   return (
     <View style={styles.gridContainer}>
@@ -21,8 +24,7 @@ const GridBackground = () => {
   );
 };
 
-// Styles pour le GridBackground
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({  
   gridContainer: {
     position: 'absolute',
     top: 0,
@@ -30,11 +32,11 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     zIndex: -1, 
-    backgroundColor: 'white',
+    backgroundColor: theme.BgColor,
   },
   line: {
     position: 'absolute',
-    backgroundColor: 'rgba(0, 0, 0, 0.04)', // Couleur et transparence des lignes
+    backgroundColor: theme.lineColor, // Couleur et transparence des lignes
   },
   verticalLine: {
     width: 1, // Épaisseur des lignes verticales

@@ -5,9 +5,12 @@ import GridBackground from '../component/HomePage/GridBackground';
 import AnswerCardStack from '../component/Reusable/AnswerCardStack';
 import Question from '../component/Reusable/Question';
 import Header from '../component/Reusable/Header';
+import { useTheme } from '../hooks/useTheme';
 
 export default function HomeScreen() {
   const { currentClass, currentQuestion, isLoading, selectedAnswer, isAnswerCorrect } = useQuiz();
+  const theme = useTheme();
+  const styles = getStyles(theme); // Création des styles dynamiquement en fonction du thème
 
   return (
     <View style={styles.page}>
@@ -37,7 +40,7 @@ export default function HomeScreen() {
 }
 
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({  
   page: {
     flex: 1,
     backgroundColor: 'transparent', 
@@ -57,5 +60,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center',
     marginHorizontal: 20,
+    color: theme.textColor,
   },
 });

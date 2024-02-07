@@ -2,8 +2,12 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { colors } from '../../constant/colors';
 import { fonts } from '../../constant/fonts';
+import { useTheme } from '../../hooks/useTheme';
 
 export default function AnswerCard({ option, onSelect, index, selectedAnswer, isAnswerCorrect }) {
+  const theme = useTheme();
+  const styles = getStyles(theme); // Création des styles dynamiquement en fonction du thème
+
   const optionPrefix = `${index + 1}. `;
   let backgroundColor = colors.Black;
 
@@ -19,7 +23,7 @@ export default function AnswerCard({ option, onSelect, index, selectedAnswer, is
 }
 
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({  
     card: {
         minHeight: 40,
         width: '100%',
@@ -29,12 +33,12 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 3,
         elevation: 2,
-        backgroundColor: colors.Black,
+        backgroundColor: theme.reverseBgColor,
         padding: 14,
         marginVertical: 4,
     },
     option: {
-      color: 'white',
+      color: theme.reverseTextColor,
       fontFamily: fonts.text
     }
 });

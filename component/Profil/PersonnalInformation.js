@@ -5,15 +5,19 @@ import { ref, getDownloadURL } from 'firebase/storage';
 import { FB_STORE } from '../../firebaseconfig';
 import { fonts } from '../../constant/fonts';
 import { colors } from '../../constant/colors';
+import { useTheme } from '../../hooks/useTheme';
 
 export default function PersonalInformation() {
   const { profile } = useUser();
   const currentYear = new Date().getFullYear();
   const [profilePicUrl, setProfilePicUrl] = useState(null);
+  const theme = useTheme();
+  const styles = getStyles(theme); // Création des styles dynamiquement en fonction du thème
+
 
   useEffect(() => {
     const fetchProfilePicUrl = async () => {
-      const staticImageName = 'ProfilPicture.jpg'; // Remplacez par le chemin/nom de fichier exact de votre image
+      const staticImageName = 'ProfilPicture.jpg';
       const picRef = ref(FB_STORE, staticImageName);
       const url = await getDownloadURL(picRef);
       setProfilePicUrl(url);
@@ -27,7 +31,6 @@ export default function PersonalInformation() {
       <View style={styles.yearContainer}>
         <Text style={styles.yearText}>{currentYear}</Text>
       </View>
-      {/* La View suivante agit comme un wrapper pour votre Image pour lui permettre de se superposer sur l'année */}
       <View style={styles.profilePicWrapper}>
         {profilePicUrl && (
           <Image source={{ uri: profilePicUrl }} style={styles.profilePic} />
@@ -38,7 +41,7 @@ export default function PersonalInformation() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({  
   identity: {
     fontSize: 20,
     fontFamily: fonts.title,
@@ -63,14 +66,14 @@ const styles = StyleSheet.create({
   },
   yearContainer: {
     alignItems: 'center',
-    backgroundColor: colors.Black,
+    backgroundColor: theme.reverseBgColor,
     width: '100%',
     padding: 16,
   },
   yearText: {
     fontFamily: fonts.title,
     fontSize: 120,
-    color: 'white',
+    color: theme.reverseTextColor,
     // marginBottom: -10, 
   },
 });

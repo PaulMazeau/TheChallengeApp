@@ -2,8 +2,11 @@ import React from 'react';
 import { StyleSheet, Text, View, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { fonts } from '../../constant/fonts';
+import { useTheme } from '../../hooks/useTheme';
 
 export default function Header() {
+  const theme = useTheme();
+  const styles = getStyles(theme); // Création des styles dynamiquement en fonction du thème
 
   return (
     <SafeAreaView style={styles.container}>
@@ -12,7 +15,7 @@ export default function Header() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({  
   container: {
     paddingBottom: Platform.OS === 'android' ? 25 : -25,
     justifyContent: 'space-between',
@@ -22,6 +25,6 @@ const styles = StyleSheet.create({
   logo: {
     fontSize: 32,
     fontFamily: fonts.title,
-    color: 'black',
+    color: theme.textColor,
   },
 });
