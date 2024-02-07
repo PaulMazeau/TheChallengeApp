@@ -15,6 +15,8 @@ export const QuizProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false); // Initialisé à false pour commencer le chargement
   const [responses, setResponses] = useState([]);
   const { profile } = useUser();
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [isAnswerCorrect, setIsAnswerCorrect] = useState(false);
 
   useEffect(() => {
     const loadClassesOfTheDay = async () => {
@@ -53,19 +55,18 @@ export const QuizProvider = ({ children }) => {
   }, [profile.uid]);
 
   const submitAnswer = async (selectedOptionIndex) => {
-    const isCorrect = selectedOptionIndex === questions[currentQuestionIndex].answer;
-    console.log(`Réponse à la question ${questions[currentQuestionIndex].id}:`, isCorrect ? "Correcte" : "Incorrecte");
+  const isCorrect = selectedOptionIndex === questions[currentQuestionIndex].answer;
+  setSelectedAnswer(selectedOptionIndex);
+  setIsAnswerCorrect(isCorrect);
 
-    setResponses(prevResponses => [
-      ...prevResponses,
-      { questionId: questions[currentQuestionIndex].id, selectedOption: selectedOptionIndex, isCorrect }
-    ]);
-
+  setTimeout(async () => {
     if (currentQuestionIndex < questions.length - 1) {
       nextQuestion();
     } else {
       await updateProgress(currentClassIndex === currentClasses.length - 1);
     }
+    setSelectedAnswer(null); // Réinitialiser la réponse sélectionnée pour la prochaine question
+    }, 3000); // Attendre 3 secondes avant de passer à la question suivante
   };
 
   const loadQuestionsForCurrentClass = async (classData) => {
@@ -137,6 +138,10 @@ export const QuizProvider = ({ children }) => {
     submitAnswer,
     isLoading,
     totalQuestions: questions.length,
+    selectedAnswer,
+    isAnswerCorrect,
+    setSelectedAnswer,
+    setIsAnswerCorrect,
   };
 
   return <QuizContext.Provider value={value}>{children}</QuizContext.Provider>;

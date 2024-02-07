@@ -7,7 +7,7 @@ import Question from '../component/Reusable/Question';
 import Header from '../component/Reusable/Header';
 
 export default function HomeScreen() {
-  const { currentClass, currentQuestion, isLoading } = useQuiz();
+  const { currentClass, currentQuestion, isLoading, selectedAnswer, isAnswerCorrect } = useQuiz();
 
   return (
     <View style={styles.page}>
@@ -22,7 +22,11 @@ export default function HomeScreen() {
               title={currentClass?.title}
               question={currentQuestion?.question}
             />
-            <AnswerCardStack options={currentQuestion?.options}/>
+            <AnswerCardStack
+              options={currentQuestion?.options}
+              selectedAnswer={selectedAnswer}
+              isAnswerCorrect={isAnswerCorrect}
+            />
           </>
         ) : (
           <Text style={styles.noQuizText}>Aucun quizz à faire pour le moment. Revenez plus tard !</Text>
@@ -31,6 +35,7 @@ export default function HomeScreen() {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   page: {
