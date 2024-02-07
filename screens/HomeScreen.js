@@ -7,14 +7,16 @@ import Question from '../component/Reusable/Question';
 import Header from '../component/Reusable/Header';
 
 export default function HomeScreen() {
-  const { currentClass, currentQuestion } = useQuiz();
+  const { currentClass, currentQuestion, isLoading } = useQuiz();
 
   return (
     <View style={styles.page}>
-      <GridBackground/>
-      <Header/>
+      <GridBackground />
+      <Header />
       <View style={styles.container}>
-        {currentClass ? (
+        {isLoading ? (
+          <Text>Chargement...</Text>
+        ) : currentClass ? (
           <>
             <Question 
               title={currentClass?.title}
@@ -41,9 +43,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  noQuizText: { // Style pour le message indiquant l'absence de quizz
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noQuizText: {
     fontSize: 18,
     textAlign: 'center',
     marginHorizontal: 20,
-  }
+  },
 });

@@ -8,65 +8,51 @@ const QuizContext = createContext();
 export const useQuiz = () => useContext(QuizContext);
 
 export const QuizProvider = ({ children }) => {
-  const [currentClass, setCurrentClass] = useState(null);
+  const [currentClasses, setCurrentClasses] = useState([]);
+  const [currentClassIndex, setCurrentClassIndex] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [questions, setQuestions] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false); // Initialisé à false pour commencer le chargement
   const [responses, setResponses] = useState([]);
   const { profile } = useUser();
 
   useEffect(() => {
-    const loadClassOfTheDay = async () => {
+    const loadClassesOfTheDay = async () => {
+      setIsLoading(true); // Commencer le chargement
       const today = new Date();
-      const dateString = today.toISOString().split('T')[0]; // Format 'YYYY-MM-DD'
-  
+      const dateString = today.toISOString().split('T')[0];
+
       const classesRef = collection(FB_DB, 'class');
       const q = query(classesRef, where('repeatDate', 'array-contains', dateString));
       const querySnapshot = await getDocs(q);
-  
-      if (!querySnapshot.empty) {
-        const classDoc = querySnapshot.docs[0];
+      const classesData = [];
+
+      for (const classDoc of querySnapshot.docs) {
         const classData = {
           id: classDoc.id,
           ...classDoc.data(),
         };
-  
-        // Vérifier si l'utilisateur a déjà complété le quizz pour cette classe
+
         const progressDocRef = doc(FB_DB, 'users', profile.uid, 'progress', classData.id);
         const progressDoc = await getDoc(progressDocRef);
-        
-        // S'il n'y a pas de données de progression ou si le quizz n'a pas encore été fait aujourd'hui
+
         if (!progressDoc.exists() || !(progressDoc.data().completedDates && progressDoc.data().completedDates.includes(dateString))) {
-          setCurrentClass(classData);
-  
-          const questionsRef = collection(FB_DB, `class/${classDoc.id}/questions`);
-          const questionsSnapshot = await getDocs(questionsRef);
-          setQuestions(questionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-        } else {
-          // Si le quizz a déjà été fait, réinitialiser les états pour ne pas afficher le quizz
-          setCurrentClass(null);
-          setQuestions([]);
+          classesData.push(classData);
         }
-      } else {
-        // Si aucun quizz n'est disponible pour aujourd'hui
-        setCurrentClass(null);
-        setQuestions([]);
       }
-      setIsLoading(false);
+
+      setCurrentClasses(classesData);
+      setCurrentClassIndex(0);
+      if (classesData.length > 0) {
+        await loadQuestionsForCurrentClass(classesData[0]);
+      }
+      setIsLoading(false); // Fin du chargement
     };
-  
-    loadClassOfTheDay();
+
+    loadClassesOfTheDay();
   }, [profile.uid]);
-  
 
-  useEffect(() => {
-    // Assurez-vous que toutes les questions ont été répondues avant d'appeler updateProgress
-    if (responses.length === questions.length && questions.length > 0) {
-      updateProgress();
-    }
-  }, [responses, questions.length]);
-
-  const submitAnswer = (selectedOptionIndex) => {
+  const submitAnswer = async (selectedOptionIndex) => {
     const isCorrect = selectedOptionIndex === questions[currentQuestionIndex].answer;
     console.log(`Réponse à la question ${questions[currentQuestionIndex].id}:`, isCorrect ? "Correcte" : "Incorrecte");
 
@@ -77,24 +63,32 @@ export const QuizProvider = ({ children }) => {
 
     if (currentQuestionIndex < questions.length - 1) {
       nextQuestion();
+    } else {
+      await updateProgress(currentClassIndex === currentClasses.length - 1);
     }
   };
 
-  const updateProgress = async () => {
+  const loadQuestionsForCurrentClass = async (classData) => {
+    const questionsRef = collection(FB_DB, `class/${classData.id}/questions`);
+    const questionsSnapshot = await getDocs(questionsRef);
+    setQuestions(questionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    setCurrentQuestionIndex(0); // Réinitialiser l'index de question pour la nouvelle classe
+  };
+
+  const updateProgress = async (isLastQuiz) => {
     const today = new Date().toISOString().split('T')[0];
     const correctAnswersCount = responses.filter(response => response.isCorrect).length;
-  
-    const progressDocRef = doc(FB_DB, 'users', profile.uid, 'progress', currentClass.id);
-  
+
+    const progressDocRef = doc(FB_DB, 'users', profile.uid, 'progress', currentClasses[currentClassIndex]?.id);
+
     try {
       const progressDoc = await getDoc(progressDocRef);
       if (progressDoc.exists()) {
-        // Ajoute la date du jour aux dates complétées si elle n'y est pas déjà
         let completedDates = progressDoc.data().completedDates || [];
         if (!completedDates.includes(today)) {
           completedDates.push(today);
         }
-  
+
         await updateDoc(progressDocRef, {
           lastScore: correctAnswersCount,
           repeatDone: (progressDoc.data().repeatDone || 0) + 1,
@@ -102,8 +96,8 @@ export const QuizProvider = ({ children }) => {
         });
       } else {
         await setDoc(progressDocRef, {
-          classID: currentClass.id,
-          className: currentClass.title,
+          classID: currentClasses[currentClassIndex]?.id,
+          className: currentClasses[currentClassIndex]?.title,
           lastScore: correctAnswersCount,
           repeatDone: 1,
           completedDates: [today],
@@ -112,21 +106,35 @@ export const QuizProvider = ({ children }) => {
     } catch (error) {
       console.error("Erreur lors de la mise à jour du progrès :", error);
     }
-  
-    setResponses([]);
-    setCurrentQuestionIndex(0);
-  };
-  
 
-  const nextQuestion = () => setCurrentQuestionIndex(prevIndex => Math.min(prevIndex + 1, questions.length - 1));
-  const prevQuestion = () => setCurrentQuestionIndex(prevIndex => Math.max(prevIndex - 1, 0));
+    setResponses([]);
+
+    if (!isLastQuiz) {
+      const nextClassIndex = currentClassIndex + 1;
+      if (nextClassIndex < currentClasses.length) {
+        setCurrentClassIndex(nextClassIndex);
+        await loadQuestionsForCurrentClass(currentClasses[nextClassIndex]);
+      } else {
+        console.log('Tous les quizz pour aujourdhui sont terminés.');
+        // Ici, vous pouvez réinitialiser l'état ou gérer la fin de tous les quizz.
+        setIsLoading(false); // Assurez-vous que l'utilisateur sait que le chargement est terminé
+        setCurrentClasses([]);
+        setCurrentClassIndex(0);
+      }
+    } else {
+      console.log('Tous les quizz pour aujourdhui sont terminés.');
+      setIsLoading(false); // Assurez-vous que l'utilisateur sait que le chargement est terminé
+      setCurrentClasses([]);
+      setCurrentClassIndex(0);
+    }
+  };
+
+  const nextQuestion = () => setCurrentQuestionIndex(prevIndex => prevIndex + 1);
 
   const value = {
-    currentClass,
+    currentClass: currentClasses[currentClassIndex],
     currentQuestion: questions[currentQuestionIndex],
     submitAnswer,
-    nextQuestion,
-    prevQuestion,
     isLoading,
     totalQuestions: questions.length,
   };

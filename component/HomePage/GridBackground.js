@@ -3,7 +3,7 @@ import { View, StyleSheet, Dimensions } from 'react-native';
 
 // Composant GridBackground
 const GridBackground = () => {
-  const gridSize = 20; // La taille des cellules du cadrillage
+  const gridSize = 60; // La taille des cellules du cadrillage
   const screenWidth = Dimensions.get('window').width;
   const screenHeight = Dimensions.get('window').height;
   const numVerticalLines = Math.ceil(screenWidth / gridSize);
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   },
   line: {
     position: 'absolute',
-    backgroundColor: 'rgba(0, 0, 0, 0.05)', // Couleur et transparence des lignes
+    backgroundColor: 'rgba(0, 0, 0, 0.04)', // Couleur et transparence des lignes
   },
   verticalLine: {
     width: 1, // Épaisseur des lignes verticales
