@@ -1,29 +1,24 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { colors } from '../../constant/colors';
-import { fonts } from '../../constant/fonts';
 import { useTheme } from '../../hooks/useTheme';
+import { fonts } from '../../constant/fonts';
 
 export default function AnswerCard({ option, onSelect, index, selectedAnswer, isAnswerCorrect }) {
   const theme = useTheme();
-  const styles = getStyles(theme); // Création des styles dynamiquement en fonction du thème
+  // Passez selectedAnswer et isAnswerCorrect à getStyles pour déterminer la couleur de fond
+  const styles = getStyles(theme, selectedAnswer === index, isAnswerCorrect);
 
   const optionPrefix = `${index + 1}. `;
-  let backgroundColor = colors.Black;
-
-  if (selectedAnswer === index) {
-    backgroundColor = isAnswerCorrect ? 'green' : 'red'; // Vert si correct, rouge sinon
-  }
 
   return (
-    <TouchableOpacity style={[styles.card, { backgroundColor }]} onPress={() => onSelect(index)}>
+    <TouchableOpacity style={styles.card} onPress={() => onSelect(index)}>
       <Text style={styles.option}>{optionPrefix} {option}</Text>
     </TouchableOpacity>
   );
 }
 
-
-const getStyles = (theme) => StyleSheet.create({  
+// Modifiez getStyles pour accepter selected et isCorrect
+const getStyles = (theme, selected, isCorrect) => StyleSheet.create({  
     card: {
         minHeight: 40,
         width: '100%',
@@ -33,12 +28,14 @@ const getStyles = (theme) => StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 3,
         elevation: 2,
-        backgroundColor: theme.reverseBgColor,
+        // Utilisez la condition pour déterminer la couleur de fond
+        backgroundColor: selected ? (isCorrect ? 'green' : 'red') : theme.reverseBgColor,
         padding: 14,
         marginVertical: 4,
     },
     option: {
+      // Assurez-vous que la couleur du texte est visible contre le fond
       color: theme.reverseTextColor,
-      fontFamily: fonts.text
+      fontFamily: fonts.text, // Remplacez par la valeur correcte de fonts.text si nécessaire
     }
 });

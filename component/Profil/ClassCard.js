@@ -57,7 +57,7 @@ const getStyles = (theme) => StyleSheet.create({
         borderRadius: 4,
         width: 92,
         height: 92,
-        marginBottom: 8,
+        marginBottom: 40,
         elevation: 4,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },

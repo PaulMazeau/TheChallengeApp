@@ -66,7 +66,7 @@ export const QuizProvider = ({ children }) => {
       await updateProgress(currentClassIndex === currentClasses.length - 1);
     }
     setSelectedAnswer(null); // Réinitialiser la réponse sélectionnée pour la prochaine question
-    }, 3000); // Attendre 3 secondes avant de passer à la question suivante
+    }, 2000); // Attendre 3 secondes avant de passer à la question suivante
   };
 
   const loadQuestionsForCurrentClass = async (classData) => {
