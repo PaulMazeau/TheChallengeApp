@@ -7,18 +7,16 @@ import { useTheme } from '../../hooks/useTheme';
 export default function ClassCard() {
     const { progress } = useUser();
     const theme = useTheme();
-    const styles = getStyles(theme); // Création des styles dynamiquement en fonction du thème
-  
-    // Fonction pour générer les "sous-cartes" pour l'effet de pile
+    const styles = getStyles(theme);
+
     const renderStackEffect = (index) => {
         let stack = [];
-        const stackCount = 2; // Nombre de sous-cartes à afficher
+        const stackCount = 2;
         for (let i = 0; i < stackCount; i++) {
             stack.push(
                 <View key={`stack-${index}-${i}`} style={[styles.stackItem, {
-                    // Décale chaque "sous-carte" légèrement pour créer l'effet de pile
                     transform: [{ translateY: -i * 2 }, { translateX: i * 2 }, { rotate: `${index % 3 - 10}deg` }],
-                    zIndex: -i // S'assure que les "sous-cartes" restent sous la carte principale
+                    zIndex: -i
                 }]} />
             );
         }
@@ -27,25 +25,28 @@ export default function ClassCard() {
 
     return (
         <View style={styles.container}>
-            {progress.map((item, index) => (
-                <View key={index} style={[styles.progressItem, { transform: [{ rotate: `${index % 3 - 1}deg` }] }]}>
-                    {/* Affiche l'effet de pile sous chaque carte */}
-                    {renderStackEffect(index)}
-                    <View style={styles.topCard}>
-                        <Text style={styles.score}>{item.lastScore}/10</Text>
-                        <Text style={styles.repetition}>{item.repeatDone} répétitions</Text>
+            {progress.length > 0 ? (
+                progress.map((item, index) => (
+                    <View key={index} style={[styles.progressItem, { transform: [{ rotate: `${index % 3 - 1}deg` }] }]}>
+                        {renderStackEffect(index)}
+                        <View style={styles.topCard}>
+                            <Text style={styles.score}>{item.lastScore}/10</Text>
+                            <Text style={styles.repetition}>{item.repeatDone} répétitions</Text>
+                        </View>
+                        <View style={styles.bottomCard}>
+                            <Text style={styles.class} numberOfLines={1} ellipsizeMode='tail'>{item.className}</Text>
+                        </View>
                     </View>
-                    <View style={styles.bottomCard}>
-                        {/* Appliquez numberOfLines et ellipsizeMode ici */}
-                        <Text style={styles.class} numberOfLines={1} ellipsizeMode='tail'>{item.className}</Text>
-                    </View>
-                </View>
-            ))}
+                ))
+            ) : (
+                // Affichez ce Text lorsque l'utilisateur n'a pas encore de progression
+                <Text style={styles.noProgressText}>Pas encore de progression</Text>
+            )}
         </View>
     );
 }
 
-const getStyles = (theme) => StyleSheet.create({  
+const getStyles = (theme) => StyleSheet.create({
     container: {
         flexDirection: 'row',
         flexWrap: 'wrap',
@@ -66,7 +67,7 @@ const getStyles = (theme) => StyleSheet.create({
         shadowRadius: 3.84,
         alignItems: 'center',
         justifyContent: 'center',
-        position: 'relative', // Important pour le positionnement des "sous-cartes"
+        position: 'relative',
     },
     stackItem: {
         position: 'absolute',
@@ -104,5 +105,12 @@ const getStyles = (theme) => StyleSheet.create({
         color: theme.textColor,
         fontFamily: fonts.text,
         fontSize: 16,
+    },
+    noProgressText: {
+        color: theme.textColor,
+        fontSize: 16,
+        fontFamily: fonts.text,
+        textAlign: 'center',
+        marginTop: 20,
     },
 });

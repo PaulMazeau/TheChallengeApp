@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, View, ScrollView, Platform, Image } from 'react-native'; // Assurez-vous d'inclure Platform ici
+import { StyleSheet, View, ScrollView, Platform, Text } from 'react-native'; // Assurez-vous d'inclure Platform ici
 import { SvgUri } from 'react-native-svg';
 import { useUser } from '../../context/UserContext';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { FB_STORE } from '../../firebaseconfig';
+import { useTheme } from '../../hooks/useTheme';
+import { fonts } from '../../constant/fonts';
 
 const SvgImage = ({ uri, style }) => {
+
     if (Platform.OS === 'web') {
       // Utilisation d'une balise img pour le web
       return <img src={uri} style={style} alt="SVG Badge" />;
@@ -17,6 +20,9 @@ const SvgImage = ({ uri, style }) => {
 export default function Badges() {
     const { progress } = useUser();
     const [badgeUrls, setBadgeUrls] = useState([]);
+    const theme = useTheme();
+    const styles = getStyles(theme); // Création des styles dynamiquement en fonction du thème
+    
 
     useEffect(() => {
         const totalRepeatDone = progress.reduce((total, current) => total + current.repeatDone, 0);
@@ -50,18 +56,24 @@ export default function Badges() {
 
     return (
         <View style={styles.container}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollViewContent}>
-                {badgeUrls.map((url, index) => (
-                    <View key={index} style={styles.badgeContainer}>
-                        <SvgImage uri={url} style={{ width: '100%', height: '100%' }} />
-                    </View>
-                ))}
-            </ScrollView>
+            <View style={styles.container}>
+            {badgeUrls.length > 0 ? (
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollViewContent}>
+                    {badgeUrls.map((url, index) => (
+                        <View key={index} style={styles.badgeContainer}>
+                            <SvgImage uri={url} style={{ width: '100%', height: '100%' }} />
+                        </View>
+                    ))}
+                </ScrollView>
+            ) : (
+                <Text style={styles.noBadgesText}>Pas encore de badges débloqué</Text>
+            )}
+        </View>
         </View>
     );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({  
     container: {
         marginTop: 8,
         marginBottom: 36,
@@ -74,4 +86,10 @@ const styles = StyleSheet.create({
     scrollViewContent: {
         paddingHorizontal: 16,
     },
+    noBadgesText: {
+        color: theme.textColor,
+        textAlign: 'center',
+        fontSize: 16,
+        fontFamily: fonts.text
+    }
 });
