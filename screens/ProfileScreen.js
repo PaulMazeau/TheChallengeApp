@@ -6,6 +6,7 @@ import PersonnalInformation from '../component/Profil/PersonnalInformation';
 import { fonts } from '../constant/fonts';
 import { StatusBar } from 'expo-status-bar';
 import { useTheme } from '../hooks/useTheme';
+import DisconnectButton from '../component/Profil/DisconnectButton';
 
 export default function ProfileScreen() {
   const theme = useTheme();
@@ -24,6 +25,7 @@ export default function ProfileScreen() {
       <Badges />
       <Text style={styles.subTitle}>Leçon</Text>
       <ClassCard />
+      <DisconnectButton/>
     </ScrollView>
   );
 }
