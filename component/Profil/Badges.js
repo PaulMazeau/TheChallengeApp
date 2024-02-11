@@ -1,21 +1,34 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View, ScrollView, Platform, Image } from 'react-native'; // Assurez-vous d'inclure Platform ici
 import { SvgUri } from 'react-native-svg';
 import { useUser } from '../../context/UserContext';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { FB_STORE } from '../../firebaseconfig';
 
+const SvgImage = ({ uri, style }) => {
+    if (Platform.OS === 'web') {
+      // Utilisation d'une balise img pour le web
+      return <img src={uri} style={style} alt="SVG Badge" />;
+    }
+    // Utilisation de SvgUri pour les plateformes natives
+    return <SvgUri uri={uri} width="100%" height="100%" />;
+  };
+
 export default function Badges() {
-    const { progress } = useUser(); // Utilisez le hook useUser pour accéder aux données de progression
+    const { progress } = useUser();
     const [badgeUrls, setBadgeUrls] = useState([]);
 
     useEffect(() => {
         const totalRepeatDone = progress.reduce((total, current) => total + current.repeatDone, 0);
-
-        // Déterminez quels badges débloquer en fonction de totalRepeatDone
         const badgeNames = [];
         if (totalRepeatDone >= 10) badgeNames.push('Badge_10_quizz.svg');
         if (totalRepeatDone >= 20) badgeNames.push('Badge_20_quizz.svg');
+        if (totalRepeatDone >= 30) badgeNames.push('Badge_30_quizz.svg');
+        if (totalRepeatDone >= 50) badgeNames.push('Badge_50_quizz.svg');
+        if (totalRepeatDone >= 100) badgeNames.push('Badge_100_quizz.svg');
+        if (totalRepeatDone >= 150) badgeNames.push('Badge_150_quizz.svg');
+        if (totalRepeatDone >= 365) badgeNames.push('Badge_365_quizz.svg');
+
         // Ajoutez d'autres conditions pour les paliers de badges supplémentaires
 
         // Fonction pour charger les URLs des badges débloqués
@@ -29,26 +42,18 @@ export default function Badges() {
                     return null;
                 }
             }));
-            setBadgeUrls(urls.filter(url => url)); // Filtrez pour éliminer les valeurs nulles
+            setBadgeUrls(urls.filter(url => url));
         };
 
         fetchBadges();
-    }, [progress]); // Ajoutez progress comme dépendance pour recalculer à chaque mise à jour
+    }, [progress]);
 
     return (
         <View style={styles.container}>
-            <ScrollView 
-                horizontal 
-                showsHorizontalScrollIndicator={false} 
-                contentContainerStyle={styles.scrollViewContent}
-            >
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollViewContent}>
                 {badgeUrls.map((url, index) => (
                     <View key={index} style={styles.badgeContainer}>
-                        <SvgUri
-                            width="100%"
-                            height="100%"
-                            uri={url}
-                        />
+                        <SvgImage uri={url} style={{ width: '100%', height: '100%' }} />
                     </View>
                 ))}
             </ScrollView>

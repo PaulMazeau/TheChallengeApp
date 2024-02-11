@@ -1,11 +1,11 @@
 import { initializeApp } from "firebase/app";
-import { initializeAuth, getReactNativePersistence } from "firebase/auth";
+import { initializeAuth, getAuth, inMemoryPersistence, getReactNativePersistence } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from 'firebase/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PROJECTID, APIKEY, AUTHDOMAIN, STORAGEBUCKET, MESSAGINGSENDERID, APPID } from '@env';
 
-const firebaseconfig = {
+const firebaseConfig = {
     apiKey: APIKEY,
     authDomain: AUTHDOMAIN,
     projectId: PROJECTID,
@@ -15,12 +15,21 @@ const firebaseconfig = {
 };
 
 // Initialize Firebase
-const FB_APP = initializeApp(firebaseconfig);
+const FB_APP = initializeApp(firebaseConfig);
 
-// Utiliser AsyncStorage pour la persistance
-const FB_AUTH = initializeAuth(FB_APP, {
-  persistence: getReactNativePersistence(AsyncStorage)
-});
+let FB_AUTH;
+
+if (typeof document !== 'undefined') {
+    // Assume web environment
+    FB_AUTH = getAuth(FB_APP);
+    // Optionally, you can enable persistence for web
+    // auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+} else {
+    // Assume React Native environment
+    FB_AUTH = initializeAuth(FB_APP, {
+        persistence: getReactNativePersistence(AsyncStorage)
+    });
+}
 
 const FB_DB = getFirestore(FB_APP);
 const FB_STORE = getStorage(FB_APP);
