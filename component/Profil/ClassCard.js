@@ -36,7 +36,8 @@ export default function ClassCard() {
                         <Text style={styles.repetition}>{item.repeatDone} répétitions</Text>
                     </View>
                     <View style={styles.bottomCard}>
-                        <Text style={styles.class}>{item.className}</Text>
+                        {/* Appliquez numberOfLines et ellipsizeMode ici */}
+                        <Text style={styles.class} numberOfLines={1} ellipsizeMode='tail'>{item.className}</Text>
                     </View>
                 </View>
             ))}
