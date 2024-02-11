@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PROJECTID, APIKEY, AUTHDOMAIN, STORAGEBUCKET, MESSAGINGSENDERID, APPID } from '@env';
 
 const firebaseConfig = {
-    apiKey: APIKEY,
+    apiKey: APIKEY || 'mock_key',
     authDomain: AUTHDOMAIN,
     projectId: PROJECTID,
     storageBucket: STORAGEBUCKET,
