@@ -29,8 +29,8 @@ export default function HomeScreen() {
           options={currentQuestion?.options}
           selectedAnswer={selectedAnswer}
           isAnswerCorrect={isAnswerCorrect}
-          correctAnswerIndex={currentQuestion?.answer} // Passez l'index de la bonne réponse ici
-        />
+          correctAnswerIndex={currentQuestion?.answer - 1}
+          />
           </>
         ) : (
           <Text style={styles.noQuizText}>Aucun quizz à faire pour le moment. Revenez plus tard !</Text>
