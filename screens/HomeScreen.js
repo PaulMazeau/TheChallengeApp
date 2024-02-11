@@ -25,11 +25,12 @@ export default function HomeScreen() {
               title={currentClass?.title}
               question={currentQuestion?.question}
             />
-            <AnswerCardStack
-              options={currentQuestion?.options}
-              selectedAnswer={selectedAnswer}
-              isAnswerCorrect={isAnswerCorrect}
-            />
+        <AnswerCardStack
+          options={currentQuestion?.options}
+          selectedAnswer={selectedAnswer}
+          isAnswerCorrect={isAnswerCorrect}
+          correctAnswerIndex={currentQuestion?.answer} // Passez l'index de la bonne réponse ici
+        />
           </>
         ) : (
           <Text style={styles.noQuizText}>Aucun quizz à faire pour le moment. Revenez plus tard !</Text>

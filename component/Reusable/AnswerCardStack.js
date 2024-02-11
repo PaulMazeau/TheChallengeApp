@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import AnswerCard from './AnswerCard';
 import { useQuiz } from '../../context/ClassContext';
 
-export default function AnswerCardStack({ options = [], selectedAnswer, isAnswerCorrect }) {
+export default function AnswerCardStack({ options = [], selectedAnswer, isAnswerCorrect, correctAnswerIndex }) {
   const { submitAnswer } = useQuiz();
   
   const handleSelect = (optionIndex) => {
@@ -11,7 +11,7 @@ export default function AnswerCardStack({ options = [], selectedAnswer, isAnswer
   };
 
   return (
-    <View style={styles.page}>
+<View style={styles.page}>
       {options.map((option, index) => (
         <AnswerCard 
           key={index} 
@@ -19,7 +19,8 @@ export default function AnswerCardStack({ options = [], selectedAnswer, isAnswer
           onSelect={handleSelect} 
           index={index} 
           selectedAnswer={selectedAnswer} 
-          isAnswerCorrect={isAnswerCorrect} 
+          isAnswerCorrect={isAnswerCorrect}
+          correctAnswerIndex={correctAnswerIndex} // Ajout de cette ligne
         />
       ))}
     </View>
