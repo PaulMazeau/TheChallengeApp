@@ -1,5 +1,5 @@
 import React, {  } from 'react';
-import { StyleSheet, ScrollView, Text, Button } from 'react-native';
+import { StyleSheet, ScrollView, Text, Button, Platform } from 'react-native';
 import ClassCard from '../component/Profil/ClassCard';
 import Badges from '../component/Profil/Badges';
 import PersonnalInformation from '../component/Profil/PersonnalInformation';
@@ -25,7 +25,9 @@ export default function ProfileScreen({navigation}) {
       <Badges />
       <Text style={styles.subTitle}>Leçon</Text>
       <ClassCard />
+      {Platform.OS === 'web' && (
       <Button title="Retourner aux quizz" onPress={() => navigation.goBack()}></Button>
+      )}
       <DisconnectButton/>
     </ScrollView>
   );
