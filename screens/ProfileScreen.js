@@ -1,5 +1,5 @@
 import React, {  } from 'react';
-import { StyleSheet, ScrollView, Text, View } from 'react-native';
+import { StyleSheet, ScrollView, Text, Button } from 'react-native';
 import ClassCard from '../component/Profil/ClassCard';
 import Badges from '../component/Profil/Badges';
 import PersonnalInformation from '../component/Profil/PersonnalInformation';
@@ -8,7 +8,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useTheme } from '../hooks/useTheme';
 import DisconnectButton from '../component/Profil/DisconnectButton';
 
-export default function ProfileScreen() {
+export default function ProfileScreen({navigation}) {
   const theme = useTheme();
   const styles = getStyles(theme); // Création des styles dynamiquement en fonction du thème
 
@@ -25,6 +25,7 @@ export default function ProfileScreen() {
       <Badges />
       <Text style={styles.subTitle}>Leçon</Text>
       <ClassCard />
+      <Button title="Retourner aux quizz" onPress={() => navigation.goBack()}></Button>
       <DisconnectButton/>
     </ScrollView>
   );

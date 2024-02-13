@@ -4,7 +4,7 @@ import { View, Text, Button, StyleSheet } from 'react-native';
 export default function FirstScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Bienvenue sur notre application!</Text>
+      <Text style={styles.title}>Bienvenue sur Challenge!</Text>
       <Button 
         title="Inscription"
         onPress={() => navigation.navigate('SignUp')}

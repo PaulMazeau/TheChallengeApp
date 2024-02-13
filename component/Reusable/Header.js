@@ -16,7 +16,7 @@ export default function Header() {
       <View style={styles.content}>
         <Text style={styles.logo}>Challenge</Text>
         {Platform.OS === 'web' && (
-          <TouchableOpacity style={styles.profileIcon} onPress={() => console.log('ProfileScreen')}>
+          <TouchableOpacity style={styles.profileIcon} onPress={() => navigation.navigate('ProfileScreen')}>
             <ProfileIcon stroke={theme.textColor} width={24} height={24} />
           </TouchableOpacity>
         )}
